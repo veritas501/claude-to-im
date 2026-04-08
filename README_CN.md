@@ -46,7 +46,7 @@ Claude Code / Codex → 读写你的代码库
 #### 推荐：`npx skills`
 
 ```bash
-npx skills add op7418/Claude-to-IM-skill
+npx skills add veritas501/claude-to-im
 ```
 
 安装完成后，直接对 Claude Code 说：
@@ -64,7 +64,7 @@ npx skills add op7418/Claude-to-IM-skill
 #### 备选：直接克隆到 Claude Code Skills 目录
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/.claude/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/.claude/skills/claude-to-im
 ```
 
 Claude Code 会自动发现。
@@ -72,7 +72,7 @@ Claude Code 会自动发现。
 #### 备选：符号链接方式（适合开发）
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/code/Claude-to-IM-skill
+git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
 mkdir -p ~/.claude/skills
 ln -s ~/code/Claude-to-IM-skill ~/.claude/skills/claude-to-im
 ```
@@ -82,7 +82,7 @@ ln -s ~/code/Claude-to-IM-skill ~/.claude/skills/claude-to-im
 #### 推荐：使用 Codex 安装脚本
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/code/Claude-to-IM-skill
+git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
 bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
 ```
 
@@ -109,7 +109,7 @@ claude-to-im setup
 #### 备选：直接克隆到 Codex skills 目录
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/.codex/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/.codex/skills/claude-to-im
 cd ~/.codex/skills/claude-to-im
 bun install
 bun run build
@@ -130,7 +130,7 @@ bun run build
 如果你是通过 `npx skills` 安装的，直接重新执行：
 
 ```bash
-npx skills add op7418/Claude-to-IM-skill
+npx skills add veritas501/claude-to-im
 ```
 
 如果你是通过 `git clone` 或符号链接安装的：
@@ -361,6 +361,26 @@ start bridge
 - 允许用户/频道/服务器列表限制谁可以与机器人交互
 - 守护进程是本地进程，没有入站网络监听
 - 详见 [SECURITY.md](SECURITY.md) 了解威胁模型和应急响应
+
+## 系统服务（Linux）
+
+将守护进程注册为 systemd 服务，实现后台运行和故障自动重启。
+
+```bash
+# 先构建
+bun run build
+
+# 安装并启用服务
+bash scripts/service.sh install
+
+# 代码修改后重新构建并重载
+bun run build && bash scripts/service.sh reload
+
+# 卸载服务
+bash scripts/service.sh uninstall
+```
+
+脚本会自动检测用户、主目录和 bun 路径，无需手动配置。
 
 ## 开发
 

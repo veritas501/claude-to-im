@@ -46,7 +46,7 @@ Choose the section that matches the AI agent product you actually use.
 #### Recommended: `npx skills`
 
 ```bash
-npx skills add op7418/Claude-to-IM-skill
+npx skills add veritas501/claude-to-im
 ```
 
 After installation, tell Claude Code:
@@ -64,7 +64,7 @@ If you want WeChat specifically, you can also say:
 #### Alternative: clone directly into Claude Code skills
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/.claude/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/.claude/skills/claude-to-im
 ```
 
 Claude Code discovers it automatically.
@@ -72,7 +72,7 @@ Claude Code discovers it automatically.
 #### Alternative: symlink for development
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/code/Claude-to-IM-skill
+git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
 mkdir -p ~/.claude/skills
 ln -s ~/code/Claude-to-IM-skill ~/.claude/skills/claude-to-im
 ```
@@ -82,7 +82,7 @@ ln -s ~/code/Claude-to-IM-skill ~/.claude/skills/claude-to-im
 #### Recommended: use the Codex install script
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/code/Claude-to-IM-skill
+git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
 bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
 ```
 
@@ -109,7 +109,7 @@ If you want WeChat specifically, you can also say:
 #### Alternative: clone directly into Codex skills
 
 ```bash
-git clone https://github.com/op7418/Claude-to-IM-skill.git ~/.codex/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/.codex/skills/claude-to-im
 cd ~/.codex/skills/claude-to-im
 bun install
 bun run build
@@ -130,7 +130,7 @@ Choose the update flow that matches both your AI agent product and your installa
 If you installed with `npx skills`, re-run:
 
 ```bash
-npx skills add op7418/Claude-to-IM-skill
+npx skills add veritas501/claude-to-im
 ```
 
 If you installed via `git clone` or symlink:
@@ -361,6 +361,26 @@ See [references/troubleshooting.md](references/troubleshooting.md) for more deta
 - Allowed user/channel/guild lists restrict who can interact with the bot
 - The daemon is a local process with no inbound network listeners
 - See [SECURITY.md](SECURITY.md) for threat model and incident response
+
+## System Service (Linux)
+
+Register the daemon as a systemd service so it runs in the background and auto-restarts on failure.
+
+```bash
+# Build first
+bun run build
+
+# Install and enable service
+bash scripts/service.sh install
+
+# Rebuild and reload after code changes
+bun run build && bash scripts/service.sh reload
+
+# Uninstall
+bash scripts/service.sh uninstall
+```
+
+The script auto-detects user, home directory, and bun path — no manual configuration needed.
 
 ## Development
 

@@ -7,8 +7,6 @@ await build({
   },
   target: 'bun',
   external: [
-    '@anthropic-ai/claude-agent-sdk',
-    '@openai/codex-sdk',
     'bufferutil',
     'utf-8-validate',
     'zlib-sync',

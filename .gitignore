@@ -10,3 +10,5 @@ config.env
 !src/**/*.js
 !scripts/**/*.js
 .DS_Store
+*.service
+daemon
