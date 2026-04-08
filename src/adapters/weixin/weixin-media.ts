@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import type { FileAttachment } from 'claude-to-im/src/lib/bridge/types.js';
+import type { FileAttachment } from '../../lib/bridge/types.js';
 import type { CDNMedia, MessageItem } from './weixin-types.js';
 import { MessageItemType } from './weixin-types.js';
 

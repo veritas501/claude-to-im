@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import type { LLMProvider, StreamChatParams } from 'claude-to-im/src/lib/bridge/host.js';
+import type { LLMProvider, StreamChatParams } from '../lib/bridge/host.js';
 import type { PendingPermissions } from './permission-gateway.js';
 import { sseEvent } from './sse-utils.js';
 

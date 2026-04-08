@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import type { BridgeStore } from 'claude-to-im/src/lib/bridge/host.js';
-import { initBridgeContext } from 'claude-to-im/src/lib/bridge/context.js';
+import type { BridgeStore } from '../lib/bridge/host.js';
+import { initBridgeContext } from '../lib/bridge/context.js';
 import { WeixinAdapter } from '../adapters/weixin-adapter.js';
 import { MessageItemType } from '../adapters/weixin/weixin-types.js';
 

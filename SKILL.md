@@ -26,8 +26,8 @@ You are managing the Claude-to-IM bridge.
 User data is stored at `~/.claude-to-im/`.
 
 The skill directory (SKILL_DIR) is at `~/.claude/skills/claude-to-im`.
-In Codex installs it may instead be `~/.codex/skills/Claude-to-IM-skill`.
-If neither path exists, fall back to Glob with pattern `**/skills/**/claude-to-im/SKILL.md` or `**/skills/**/Claude-to-IM-skill/SKILL.md` and derive the root from the result.
+In Codex installs it may instead be `~/.codex/skills/claude-to-im`.
+If neither path exists, fall back to Glob with pattern `**/skills/**/claude-to-im/SKILL.md` and derive the root from the result.
 
 ## Command parsing
 

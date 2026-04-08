@@ -3,6 +3,31 @@
   "version": "0.1.0",
   "description": "Claude Code Skill: Bridge IM platforms (Telegram, Discord, Feishu, QQ, WeChat) to Claude Code sessions",
   "type": "module",
+  "main": "dist/lib/bridge/context.js",
+  "types": "dist/lib/bridge/context.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib/bridge/context.d.ts",
+      "import": "./dist/lib/bridge/context.js"
+    },
+    "./src/lib/bridge/*.js": {
+      "types": "./dist/lib/bridge/*.d.ts",
+      "import": "./dist/lib/bridge/*.js"
+    },
+    "./src/lib/bridge/adapters/*.js": {
+      "types": "./dist/lib/bridge/adapters/*.d.ts",
+      "import": "./dist/lib/bridge/adapters/*.js"
+    },
+    "./src/lib/bridge/markdown/*.js": {
+      "types": "./dist/lib/bridge/markdown/*.d.ts",
+      "import": "./dist/lib/bridge/markdown/*.js"
+    },
+    "./src/lib/bridge/security/*.js": {
+      "types": "./dist/lib/bridge/security/*.d.ts",
+      "import": "./dist/lib/bridge/security/*.js"
+    }
+  },
+  "files": ["dist", "src/lib"],
   "scripts": {
     "build": "node scripts/build.js",
     "typecheck": "tsc --noEmit",
@@ -12,14 +37,19 @@
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.62",
-    "claude-to-im": "file:../Claude-to-IM",
-    "qrcode": "^1.5.4"
+    "@larksuiteoapi/node-sdk": "^1.59.0",
+    "discord.js": "^14.25.1",
+    "markdown-it": "^14.1.1",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
   },
   "optionalDependencies": {
     "@openai/codex-sdk": "^0.110.0"
   },
   "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^22",
+    "@types/ws": "^8.5.0",
     "esbuild": "^0.25.0",
     "tsx": "^4.21.0",
     "typescript": "^5"

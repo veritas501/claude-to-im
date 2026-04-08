@@ -3,3 +3,9 @@ dist/
 *.tgz
 .env
 config.env
+*.js
+*.d.ts
+*.js.map
+*.d.ts.map
+!src/**/*.js
+.DS_Store

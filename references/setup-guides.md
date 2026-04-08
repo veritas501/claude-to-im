@@ -260,11 +260,11 @@ npm run weixin:login
 - Codex default install:
 
 ```bash
-cd ~/.codex/skills/Claude-to-IM-skill
+cd ~/.codex/skills/claude-to-im
 npm run weixin:login
 ```
 
-If you are running from a checked-out repo instead of an installed skill, use that repo's `Claude-to-IM-skill` directory.
+If you are running from a checked-out repo instead of an installed skill, use that repo's root directory.
 
 What happens next:
 
