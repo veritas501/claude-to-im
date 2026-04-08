@@ -210,7 +210,7 @@ if [ "$CTI_RUNTIME" = "claude" ] || [ "$CTI_RUNTIME" = "auto" ]; then
     check "Claude SDK cli.js exists ($SDK_CLI)" 0
   else
     if [ "$CTI_RUNTIME" = "claude" ]; then
-      check "Claude SDK cli.js exists (not found — run 'npm install' in $SKILL_DIR)" 1
+      check "Claude SDK cli.js exists (not found — run 'bun install' in $SKILL_DIR)" 1
     else
       check "Claude SDK cli.js exists (not found — OK for auto/codex mode)" 0
     fi
@@ -236,7 +236,7 @@ if [ "$CTI_RUNTIME" = "codex" ] || [ "$CTI_RUNTIME" = "auto" ]; then
     check "@openai/codex-sdk installed" 0
   else
     if [ "$CTI_RUNTIME" = "codex" ]; then
-      check "@openai/codex-sdk installed (not found — run 'npm install' in $SKILL_DIR)" 1
+      check "@openai/codex-sdk installed (not found — run 'bun install' in $SKILL_DIR)" 1
     else
       check "@openai/codex-sdk installed (not found — OK for auto/claude mode)" 0
     fi
@@ -264,17 +264,17 @@ if [ "$CTI_RUNTIME" = "codex" ] || [ "$CTI_RUNTIME" = "auto" ]; then
   fi
 fi
 
-# --- dist/daemon.mjs freshness ---
-DAEMON_MJS="$SKILL_DIR/dist/daemon.mjs"
-if [ -f "$DAEMON_MJS" ]; then
-  STALE_SRC=$(find "$SKILL_DIR/src" -name '*.ts' -newer "$DAEMON_MJS" 2>/dev/null | head -1)
+# --- dist/daemon freshness ---
+DAEMON_BIN="$SKILL_DIR/daemon"
+if [ -f "$DAEMON_BIN" ]; then
+  STALE_SRC=$(find "$SKILL_DIR/src" -name '*.ts' -newer "$DAEMON_BIN" 2>/dev/null | head -1)
   if [ -z "$STALE_SRC" ]; then
-    check "dist/daemon.mjs is up to date" 0
+    check "daemon is up to date" 0
   else
-    check "dist/daemon.mjs is stale (src changed, run 'npm run build')" 1
+    check "daemon is stale (src changed, run 'bun run build')" 1
   fi
 else
-  check "dist/daemon.mjs exists (not built — run 'npm run build')" 1
+  check "daemon exists (not built — run 'bun run build')" 1
 fi
 
 # --- config.env exists ---
@@ -394,10 +394,10 @@ if [ -f "$CONFIG_FILE" ]; then
           check "Weixin linked account store (single linked account ready)" 0
         fi
       else
-        check "Weixin linked account store (found file, but no enabled linked account with token — run 'cd $SKILL_DIR && npm run weixin:login')" 1
+        check "Weixin linked account store (found file, but no enabled linked account with token — run 'cd $SKILL_DIR && bun run weixin:login')" 1
       fi
     else
-      check "Weixin linked account store (missing — run 'cd $SKILL_DIR && npm run weixin:login')" 1
+      check "Weixin linked account store (missing — run 'cd $SKILL_DIR && bun run weixin:login')" 1
     fi
   fi
 fi
@@ -440,10 +440,10 @@ echo "Results: $PASS passed, $FAIL failed"
 if [ "$FAIL" -gt 0 ]; then
   echo ""
   echo "Common fixes:"
-  echo "  SDK cli.js missing    → cd $SKILL_DIR && npm install"
-  echo "  dist/daemon.mjs stale → cd $SKILL_DIR && npm run build"
+  echo "  SDK cli.js missing    → cd $SKILL_DIR && bun install"
+  echo "  daemon stale          → cd $SKILL_DIR && bun run build"
   echo "  config.env missing    → run setup wizard"
-  echo "  Weixin linked account missing→ cd $SKILL_DIR && npm run weixin:login"
+  echo "  Weixin linked account missing→ cd $SKILL_DIR && bun run weixin:login"
   echo "  Stale PID file        → run stop, then start"
 fi
 

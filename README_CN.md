@@ -32,9 +32,10 @@ Claude Code / Codex → 读写你的代码库
 
 ## 前置要求
 
-- **Node.js >= 20**
+- **Bun >= 1**
+- **Node.js >= 20**（Claude Code / Codex CLI 需要）
 - **Claude Code CLI**（`CTI_RUNTIME=claude` 或 `auto` 时需要）— 已安装并完成认证（`claude` 命令可用）
-- **Codex CLI**（`CTI_RUNTIME=codex` 或 `auto` 时需要）— `npm install -g @openai/codex`。鉴权：运行 `codex auth login`，或设置 `OPENAI_API_KEY`（可选，API 模式）
+- **Codex CLI**（`CTI_RUNTIME=codex` 或 `auto` 时需要）— `bun add -g @openai/codex`。鉴权：运行 `codex auth login`，或设置 `OPENAI_API_KEY`（可选，API 模式）
 
 ## 安装
 
@@ -110,8 +111,8 @@ claude-to-im setup
 ```bash
 git clone https://github.com/op7418/Claude-to-IM-skill.git ~/.codex/skills/claude-to-im
 cd ~/.codex/skills/claude-to-im
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 ### 验证安装
@@ -137,8 +138,8 @@ npx skills add op7418/Claude-to-IM-skill
 ```bash
 cd ~/.claude/skills/claude-to-im
 git pull
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 更新完成后，对 Claude Code 说：
@@ -162,8 +163,8 @@ bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
 ```bash
 cd ~/.codex/skills/claude-to-im
 git pull
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 更新完成后，对 Codex 说：
@@ -276,8 +277,8 @@ start bridge
 > 微信当前采用扫码登录、单账号模式、文本权限确认，不支持流式预览。
 
 1. 在已安装的 Skill 目录里运行本地扫码工具：
-   - Claude Code 默认安装：`cd ~/.claude/skills/claude-to-im && npm run weixin:login`
-   - Codex 默认安装：`cd ~/.codex/skills/claude-to-im && npm run weixin:login`
+   - Claude Code 默认安装：`cd ~/.claude/skills/claude-to-im && bun run weixin:login`
+   - Codex 默认安装：`cd ~/.codex/skills/claude-to-im && bun run weixin:login`
 2. 工具会生成 `~/.claude-to-im/runtime/weixin-login.html`，并尽量自动用浏览器打开
 3. 用微信扫码并在手机上确认
 4. 成功后，账号会保存到 `~/.claude-to-im/data/weixin-accounts.json`
@@ -364,11 +365,11 @@ start bridge
 ## 开发
 
 ```bash
-npm install        # 安装依赖
-npm run dev        # 开发模式运行
-npm run typecheck  # 类型检查
-npm test           # 运行测试
-npm run build      # 构建打包
+bun install        # 安装依赖
+bun run dev        # 开发模式运行
+bun run typecheck  # 类型检查
+bun test           # 运行测试
+bun run build      # 构建 ELF 二进制
 ```
 
 ## 许可

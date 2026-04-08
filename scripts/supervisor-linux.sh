@@ -6,9 +6,9 @@
 
 supervisor_start() {
   if command -v setsid >/dev/null 2>&1; then
-    setsid node "$SKILL_DIR/dist/daemon.mjs" >> "$LOG_FILE" 2>&1 < /dev/null &
+    setsid "$SKILL_DIR/daemon" >> "$LOG_FILE" 2>&1 < /dev/null &
   else
-    nohup node "$SKILL_DIR/dist/daemon.mjs" >> "$LOG_FILE" 2>&1 < /dev/null &
+    nohup "$SKILL_DIR/daemon" >> "$LOG_FILE" 2>&1 < /dev/null &
   fi
   # Fallback: write shell $! as PID; main.ts will overwrite with real PID
   echo $! > "$PID_FILE"

@@ -12,19 +12,19 @@ ensure_dirs() { mkdir -p "$CTI_HOME"/{data,logs,runtime,data/messages}; }
 
 ensure_built() {
   local need_build=0
-  if [ ! -f "$SKILL_DIR/dist/daemon.mjs" ]; then
+  if [ ! -f "$SKILL_DIR/daemon" ]; then
     need_build=1
   else
     # Check if any source file is newer than the bundle
     local newest_src
-    newest_src=$(find "$SKILL_DIR/src" -name '*.ts' -newer "$SKILL_DIR/dist/daemon.mjs" 2>/dev/null | head -1)
+    newest_src=$(find "$SKILL_DIR/src" -name '*.ts' -newer "$SKILL_DIR/daemon" 2>/dev/null | head -1)
     if [ -n "$newest_src" ]; then
       need_build=1
     fi
   fi
   if [ "$need_build" = "1" ]; then
-    echo "Building daemon bundle..."
-    (cd "$SKILL_DIR" && npm run build)
+    echo "Building daemon..."
+    (cd "$SKILL_DIR" && bun run build)
   fi
 }
 
@@ -87,7 +87,7 @@ show_failure_help() {
   echo "Next steps:"
   echo "  1. Run diagnostics:  bash \"$SKILL_DIR/scripts/doctor.sh\""
   echo "  2. Check full logs:  bash \"$SKILL_DIR/scripts/daemon.sh\" logs 100"
-  echo "  3. Rebuild bundle:   cd \"$SKILL_DIR\" && npm run build"
+  echo "  3. Rebuild bundle:   cd \"$SKILL_DIR\" && bun run build"
 }
 
 # ── Load platform-specific supervisor ──

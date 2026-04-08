@@ -3,9 +3,9 @@
 ## Development Setup
 
 ```bash
-npm install
-npm run typecheck        # Type checking
-npm run test:unit        # Unit tests
+bun install
+bun run typecheck        # Type checking
+bun run test:unit        # Unit tests
 ```
 
 ## Adding a New Adapter
@@ -30,7 +30,7 @@ Tests use Node.js built-in test runner (`node:test`) with mock implementations o
 
 ```bash
 # Run bridge tests only
-node --test --import tsx src/__tests__/unit/bridge-*.test.ts
+bun test src/__tests__/unit/bridge-*.test.ts
 ```
 
 To test a new module:

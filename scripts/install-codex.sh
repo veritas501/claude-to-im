@@ -46,18 +46,18 @@ fi
 # Ensure dependencies (need devDependencies for build step)
 if [ ! -d "$TARGET_DIR/node_modules" ] || [ ! -d "$TARGET_DIR/node_modules/@openai/codex-sdk" ]; then
   echo "Installing dependencies..."
-  (cd "$TARGET_DIR" && npm install)
+  (cd "$TARGET_DIR" && bun install)
 fi
 
 # Ensure build
-if [ ! -f "$TARGET_DIR/dist/daemon.mjs" ]; then
-  echo "Building daemon bundle..."
-  (cd "$TARGET_DIR" && npm run build)
+if [ ! -f "$TARGET_DIR/daemon" ]; then
+  echo "Building daemon..."
+  (cd "$TARGET_DIR" && bun run build)
 fi
 
 # Prune devDependencies after build
 echo "Pruning dev dependencies..."
-(cd "$TARGET_DIR" && npm prune --production)
+(cd "$TARGET_DIR" && bun pm prune --production)
 
 echo ""
 echo "Done! Start a new Codex session and use:"

@@ -91,7 +91,7 @@ export class CodexProvider implements LLMProvider {
     } catch {
       throw new Error(
         '[CodexProvider] @openai/codex-sdk is not installed. ' +
-        'Install it with: npm install @openai/codex-sdk'
+        'Install it with: bun add @openai/codex-sdk'
       );
     }
 

@@ -105,7 +105,7 @@ For each enabled channel, collect one credential at a time. Tell the user where 
   - Remind user: QQ first version only supports C2C private chat sandbox access. No group/channel support, no inline buttons, no streaming preview.
 - **Weixin**: Do not ask for a static token. Instead:
   1. Tell the user this channel uses QR login, not manual credential entry.
-  2. Run `cd SKILL_DIR && npm run weixin:login`
+  2. Run `cd SKILL_DIR && bun run weixin:login`
   3. The helper writes `~/.claude-to-im/runtime/weixin-login.html` and tries to open it automatically in the local browser.
   4. If auto-open fails, tell the user to open that HTML file manually and scan the QR code with WeChat.
   5. Wait for the helper to report success, then confirm that the linked account was saved locally.
@@ -167,17 +167,17 @@ Run: `bash "SKILL_DIR/scripts/daemon.sh" logs N`
 6. Re-validate any changed tokens
 7. Remind user: "Run `/claude-to-im stop` then `/claude-to-im start` to apply the changes."
 
-If the user wants to switch Weixin accounts during `reconfigure`, run `cd SKILL_DIR && npm run weixin:login` again. Each successful scan replaces the previously linked local account.
+If the user wants to switch Weixin accounts during `reconfigure`, run `cd SKILL_DIR && bun run weixin:login` again. Each successful scan replaces the previously linked local account.
 
 ### `doctor`
 
 Run: `bash "SKILL_DIR/scripts/doctor.sh"`
 
 Show results and suggest fixes for any failures. Common fixes:
-- SDK cli.js missing → `cd SKILL_DIR && npm install`
-- dist/daemon.mjs stale → `cd SKILL_DIR && npm run build`
+- SDK cli.js missing → `cd SKILL_DIR && bun install`
+- daemon stale → `cd SKILL_DIR && bun run build`
 - Config missing → run `setup`
-- Weixin account missing / expired → `cd SKILL_DIR && npm run weixin:login`
+- Weixin account missing / expired → `cd SKILL_DIR && bun run weixin:login`
 - Weixin voice message reports missing speech-to-text → enable WeChat's own voice transcription and resend; the bridge does not transcribe raw voice audio itself
 
 For more complex issues (messages not received, permission timeouts, high memory, stale PID files), read `SKILL_DIR/references/troubleshooting.md` for detailed diagnosis steps.

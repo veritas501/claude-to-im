@@ -32,9 +32,10 @@ Claude Code / Codex → reads/writes your codebase
 
 ## Prerequisites
 
-- **Node.js >= 20**
+- **Bun >= 1**
+- **Node.js >= 20** (for Claude Code / Codex CLIs)
 - **Claude Code CLI** (for `CTI_RUNTIME=claude` or `auto`) — installed and authenticated (`claude` command available)
-- **Codex CLI** (for `CTI_RUNTIME=codex` or `auto`) — `npm install -g @openai/codex`. Auth: run `codex auth login`, or set `OPENAI_API_KEY` (optional, for API mode)
+- **Codex CLI** (for `CTI_RUNTIME=codex` or `auto`) — `bun add -g @openai/codex`. Auth: run `codex auth login`, or set `OPENAI_API_KEY` (optional, for API mode)
 
 ## Installation
 
@@ -110,8 +111,8 @@ If you want WeChat specifically, you can also say:
 ```bash
 git clone https://github.com/op7418/Claude-to-IM-skill.git ~/.codex/skills/claude-to-im
 cd ~/.codex/skills/claude-to-im
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 ### Verify installation
@@ -137,8 +138,8 @@ If you installed via `git clone` or symlink:
 ```bash
 cd ~/.claude/skills/claude-to-im
 git pull
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 Then tell Claude Code:
@@ -162,8 +163,8 @@ If you installed with `--link` or cloned directly into the Codex skills director
 ```bash
 cd ~/.codex/skills/claude-to-im
 git pull
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 Then tell Codex:
@@ -276,8 +277,8 @@ The `setup` wizard provides inline guidance for every step. Here's a summary:
 > WeChat currently uses QR login, single-account mode, text-based permissions, and no streaming preview.
 
 1. Run the local QR helper from your installed skill directory:
-   - Claude Code default install: `cd ~/.claude/skills/claude-to-im && npm run weixin:login`
-   - Codex default install: `cd ~/.codex/skills/claude-to-im && npm run weixin:login`
+   - Claude Code default install: `cd ~/.claude/skills/claude-to-im && bun run weixin:login`
+   - Codex default install: `cd ~/.codex/skills/claude-to-im && bun run weixin:login`
 2. The helper writes `~/.claude-to-im/runtime/weixin-login.html` and tries to open it in your browser automatically
 3. Scan the QR code with WeChat and confirm on your phone
 4. On success, the linked account is stored in `~/.claude-to-im/data/weixin-accounts.json`
@@ -364,11 +365,11 @@ See [references/troubleshooting.md](references/troubleshooting.md) for more deta
 ## Development
 
 ```bash
-npm install        # Install dependencies
-npm run dev        # Run in dev mode
-npm run typecheck  # Type check
-npm test           # Run tests
-npm run build      # Build bundle
+bun install        # Install dependencies
+bun run dev        # Run in dev mode
+bun run typecheck  # Type check
+bun test           # Run tests
+bun run build      # Build ELF binary
 ```
 
 ## License

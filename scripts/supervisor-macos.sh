@@ -58,9 +58,6 @@ build_env_dict() {
 }
 
 generate_plist() {
-  local node_path
-  node_path=$(command -v node)
-
   mkdir -p "$PLIST_DIR"
   local env_dict
   env_dict=$(build_env_dict)
@@ -75,8 +72,7 @@ generate_plist() {
 
     <key>ProgramArguments</key>
     <array>
-        <string>${node_path}</string>
-        <string>${SKILL_DIR}/dist/daemon.mjs</string>
+        <string>${SKILL_DIR}/daemon</string>
     </array>
 
     <key>WorkingDirectory</key>

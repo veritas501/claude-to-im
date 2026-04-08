@@ -254,14 +254,14 @@ Instead, run the local QR helper from the installed skill directory:
 
 ```bash
 cd ~/.claude/skills/claude-to-im
-npm run weixin:login
+bun run weixin:login
 ```
 
 - Codex default install:
 
 ```bash
 cd ~/.codex/skills/claude-to-im
-npm run weixin:login
+bun run weixin:login
 ```
 
 If you are running from a checked-out repo instead of an installed skill, use that repo's root directory.
@@ -286,7 +286,7 @@ Run the helper again:
 
 ```bash
 cd <skill-dir>
-npm run weixin:login
+bun run weixin:login
 ```
 
 Each successful scan replaces the previously linked Weixin account. Only the most recent account is kept locally and used by the bridge.

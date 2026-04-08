@@ -29,11 +29,11 @@
   },
   "files": ["dist", "src/lib"],
   "scripts": {
-    "build": "node scripts/build.js",
-    "typecheck": "tsc --noEmit",
-    "dev": "tsx src/main.ts",
-    "weixin:login": "node --import tsx src/weixin-login.ts",
-    "test": "CTI_HOME=$(mktemp -d) node --test --test-concurrency=1 --import tsx --test-timeout=15000 src/__tests__/*.test.ts"
+    "build": "bun scripts/build-elf.js",
+    "typecheck": "bun tsc --noEmit",
+    "dev": "bun src/main.ts",
+    "weixin:login": "bun src/weixin-login.ts",
+    "test": "CTI_HOME=$(mktemp -d) bun test --timeout=15000 src/__tests__/*.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.62",
@@ -49,12 +49,10 @@
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^22",
-    "@types/ws": "^8.5.0",
-    "esbuild": "^0.25.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5"
+    "@types/ws": "^8.5.0"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "bun": ">=1"
   }
 }

@@ -34,7 +34,7 @@ $RuntimeDir = Join-Path $CtiHome 'runtime'
 $PidFile    = Join-Path $RuntimeDir 'bridge.pid'
 $StatusFile = Join-Path $RuntimeDir 'status.json'
 $LogFile    = Join-Path $CtiHome 'logs' 'bridge.log'
-$DaemonMjs  = Join-Path $SkillDir 'dist' 'daemon.mjs'
+$DaemonBin  = Join-Path $SkillDir 'daemon'
 
 $ServiceName = 'ClaudeToIMBridge'
 
@@ -48,19 +48,19 @@ function Ensure-Dirs {
 }
 
 function Ensure-Built {
-    if (-not (Test-Path $DaemonMjs)) {
-        Write-Host "Building daemon bundle..."
+    if (-not (Test-Path $DaemonBin)) {
+        Write-Host "Building daemon..."
         Push-Location $SkillDir
-        npm run build
+        bun run build
         Pop-Location
     } else {
         $srcFiles = Get-ChildItem -Path (Join-Path $SkillDir 'src') -Filter '*.ts' -Recurse
-        $bundleTime = (Get-Item $DaemonMjs).LastWriteTime
+        $bundleTime = (Get-Item $DaemonBin).LastWriteTime
         $stale = $srcFiles | Where-Object { $_.LastWriteTime -gt $bundleTime } | Select-Object -First 1
         if ($stale) {
-            Write-Host "Rebuilding daemon bundle (source changed)..."
+            Write-Host "Rebuilding daemon (source changed)..."
             Push-Location $SkillDir
-            npm run build
+            bun run build
             Pop-Location
         }
     }
@@ -105,16 +105,16 @@ function Show-FailureHelp {
     Write-Host "Next steps:"
     Write-Host "  1. Run diagnostics:  powershell -File `"$SkillDir\scripts\doctor.ps1`""
     Write-Host "  2. Check full logs:  powershell -File `"$SkillDir\scripts\daemon.ps1`" logs 100"
-    Write-Host "  3. Rebuild bundle:   cd `"$SkillDir`"; npm run build"
+    Write-Host "  3. Rebuild bundle:   cd `"$SkillDir`"; bun run build"
 }
 
-function Get-NodePath {
-    $nodePath = (Get-Command node -ErrorAction SilentlyContinue).Source
-    if (-not $nodePath) {
-        Write-Error "Node.js not found in PATH. Install Node.js >= 20."
+function Get-BunPath {
+    $bunPath = (Get-Command bun -ErrorAction SilentlyContinue).Source
+    if (-not $bunPath) {
+        Write-Error "Bun not found in PATH. Install Bun >= 1."
         exit 1
     }
-    return $nodePath
+    return $bunPath
 }
 
 # ── WinSW / NSSM detection ──
@@ -132,7 +132,6 @@ function Find-ServiceManager {
 
 function Install-WinSWService {
     param([string]$WinSWPath)
-    $nodePath = Get-NodePath
     $xmlPath = Join-Path $SkillDir "$ServiceName.xml"
 
     # Run as current user so the service can access ~/.claude-to-im and Codex login state
@@ -147,8 +146,8 @@ function Install-WinSWService {
   <id>$ServiceName</id>
   <name>Claude-to-IM Bridge</name>
   <description>Claude-to-IM bridge daemon</description>
-  <executable>$nodePath</executable>
-  <arguments>$DaemonMjs</arguments>
+  <executable>$DaemonBin</executable>
+  <workingdirectory>$SkillDir</workingdirectory>
   <workingdirectory>$SkillDir</workingdirectory>
   <serviceaccount>
     <username>$currentUser</username>
@@ -183,7 +182,6 @@ function Install-WinSWService {
 
 function Install-NSSMService {
     param([string]$NSSMPath)
-    $nodePath = Get-NodePath
 
     # Run as current user so the service can access ~/.claude-to-im and Codex login state
     $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
@@ -191,7 +189,7 @@ function Install-NSSMService {
     $cred = Get-Credential -UserName $currentUser -Message "Enter password for '$currentUser' (required for Windows Service logon)"
     $plainPwd = $cred.GetNetworkCredential().Password
 
-    & $NSSMPath install $ServiceName $nodePath $DaemonMjs
+    & $NSSMPath install $ServiceName $DaemonBin
     & $NSSMPath set $ServiceName AppDirectory $SkillDir
     & $NSSMPath set $ServiceName ObjectName $currentUser $plainPwd
     & $NSSMPath set $ServiceName AppStdout $LogFile
@@ -211,8 +209,6 @@ function Install-NSSMService {
 # ── Fallback: Start-Process (no service manager) ──
 
 function Start-Fallback {
-    $nodePath = Get-NodePath
-
     # Clean env
     $envClone = [System.Collections.Hashtable]::new()
     foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
@@ -221,8 +217,7 @@ function Start-Fallback {
     # Remove CLAUDECODE
     [System.Environment]::SetEnvironmentVariable('CLAUDECODE', $null)
 
-    $proc = Start-Process -FilePath $nodePath `
-        -ArgumentList $DaemonMjs `
+    $proc = Start-Process -FilePath $DaemonBin `
         -WorkingDirectory $SkillDir `
         -WindowStyle Hidden `
         -RedirectStandardOutput $LogFile `

@@ -240,7 +240,7 @@ export function preflightCheck(cliPath: string): { ok: boolean; version?: string
       ok: false,
       version: compat.version,
       error: `claude CLI ${compat.version} is missing required flags: ${compat.missingFlags.join(', ')}. ` +
-        `Update the CLI: npm update -g @anthropic-ai/claude-code`,
+        `Update the CLI: bun update -g @anthropic-ai/claude-code`,
     };
   }
   return { ok: true, version: compat.version };
