@@ -919,16 +919,16 @@ describe('bridge-manager - computeSdkSessionUpdate', () => {
     assert.equal(result, 'new-sdk-123');
   });
 
-  it('clears sdkSessionId on error even when sdkSessionId is present', async () => {
+  it('keeps sdkSessionId on error to preserve conversation context', async () => {
     const { computeSdkSessionUpdate } = await import('../../lib/bridge/bridge-manager');
     const result = computeSdkSessionUpdate('new-sdk-123', true);
-    assert.equal(result, '', 'Error with SDK ID: should clear');
+    assert.equal(result, 'new-sdk-123', 'Error with SDK ID: should keep it to preserve context');
   });
 
-  it('clears sdkSessionId on error even without sdkSessionId', async () => {
+  it('returns null on error without sdkSessionId (keep existing binding)', async () => {
     const { computeSdkSessionUpdate } = await import('../../lib/bridge/bridge-manager');
     const result = computeSdkSessionUpdate(null, true);
-    assert.equal(result, '', 'Error without SDK ID: should clear');
+    assert.equal(result, null, 'Error without SDK ID: keep existing binding value');
   });
 
   it('returns null (no update) when no error and no sdkSessionId', async () => {

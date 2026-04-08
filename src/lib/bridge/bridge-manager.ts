@@ -738,8 +738,8 @@ async function handleMessage(
     }
 
     // Persist the actual SDK session ID for future resume.
-    // If the result has an error and no session ID was captured, clear the
-    // stale ID so the next message starts fresh instead of retrying a broken resume.
+    // computeSdkSessionUpdate always keeps the session ID (even on error)
+    // to preserve conversation context across messages.
     if (binding.id) {
       try {
         const update = computeSdkSessionUpdate(result.sdkSessionId, result.hasError);
@@ -999,20 +999,22 @@ async function handleCommand(
  * Returns the new value to write, or null if no update is needed.
  *
  * Rules:
- * - If result has sdkSessionId AND no error → save the new ID
- * - If result has error (regardless of sdkSessionId) → clear to empty string
- * - Otherwise → no update needed
+ * - If a sdkSessionId was captured → always save it, even on error.
+ *   The session remains valid after errors; clearing it would cause the
+ *   next message to start a fresh session with no prior context.
+ * - If no sdkSessionId was captured → keep the existing binding value
+ *   (return null = no update). The next message will try to resume the
+ *   previous session. If the session is genuinely invalid, the SDK will
+ *   create a new one and emit a fresh session_id.
  */
 export function computeSdkSessionUpdate(
   sdkSessionId: string | null | undefined,
-  hasError: boolean,
+  _hasError: boolean,
 ): string | null {
-  if (sdkSessionId && !hasError) {
+  if (sdkSessionId) {
     return sdkSessionId;
   }
-  if (hasError) {
-    return '';
-  }
+  // No session ID captured — keep the existing binding value.
   return null;
 }
 
