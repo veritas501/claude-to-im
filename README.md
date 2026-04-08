@@ -61,35 +61,29 @@ If you want WeChat specifically, you can also say:
 帮我接微信
 ```
 
-#### Alternative: clone directly into Claude Code skills
+#### Alternative: clone and symlink
 
 ```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/.claude/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/code/claude-to-im
+mkdir -p ~/.claude/skills
+ln -s ~/code/claude-to-im/skills/claude-to-im ~/.claude/skills/claude-to-im
 ```
 
 Claude Code discovers it automatically.
-
-#### Alternative: symlink for development
-
-```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
-mkdir -p ~/.claude/skills
-ln -s ~/code/Claude-to-IM-skill ~/.claude/skills/claude-to-im
-```
 
 ### Codex
 
 #### Recommended: use the Codex install script
 
 ```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
-bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
+git clone https://github.com/veritas501/claude-to-im.git ~/code/claude-to-im
+bash ~/code/claude-to-im/scripts/install-codex.sh
 ```
 
 For local development with a live checkout:
 
 ```bash
-bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh --link
+bash ~/code/claude-to-im/scripts/install-codex.sh --link
 ```
 
 The install script places the skill under `~/.codex/skills/claude-to-im`, installs dependencies, and builds the daemon.
@@ -106,11 +100,12 @@ If you want WeChat specifically, you can also say:
 帮我接微信桥接
 ```
 
-#### Alternative: clone directly into Codex skills
+#### Alternative: clone and symlink for Codex
 
 ```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/.codex/skills/claude-to-im
-cd ~/.codex/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/code/claude-to-im
+mkdir -p ~/.codex/skills
+ln -s ~/code/claude-to-im/skills/claude-to-im ~/.codex/skills/claude-to-im
 bun install
 bun run build
 ```
@@ -133,10 +128,10 @@ If you installed with `npx skills`, re-run:
 npx skills add veritas501/claude-to-im
 ```
 
-If you installed via `git clone` or symlink:
+If you installed via `git clone` and symlink:
 
 ```bash
-cd ~/.claude/skills/claude-to-im
+cd ~/code/claude-to-im
 git pull
 bun install
 bun run build
@@ -155,13 +150,13 @@ If you installed with the Codex install script in copy mode:
 
 ```bash
 rm -rf ~/.codex/skills/claude-to-im
-bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
+bash ~/code/claude-to-im/scripts/install-codex.sh
 ```
 
-If you installed with `--link` or cloned directly into the Codex skills directory:
+If you installed with `--link` or symlink:
 
 ```bash
-cd ~/.codex/skills/claude-to-im
+cd ~/code/claude-to-im
 git pull
 bun install
 bun run build
@@ -279,6 +274,7 @@ The `setup` wizard provides inline guidance for every step. Here's a summary:
 1. Run the local QR helper from your installed skill directory:
    - Claude Code default install: `cd ~/.claude/skills/claude-to-im && bun run weixin:login`
    - Codex default install: `cd ~/.codex/skills/claude-to-im && bun run weixin:login`
+   - Symlink install: `cd ~/code/claude-to-im && bun run weixin:login`
 2. The helper writes `~/.claude-to-im/runtime/weixin-login.html` and tries to open it in your browser automatically
 3. Scan the QR code with WeChat and confirm on your phone
 4. On success, the linked account is stored in `~/.claude-to-im/data/weixin-accounts.json`
@@ -322,7 +318,7 @@ Additional notes:
 | `src/logger.ts` | Secret-redacted file logging with rotation |
 | `scripts/daemon.sh` | Process management (start/stop/status/logs) |
 | `scripts/doctor.sh` | Health checks |
-| `SKILL.md` | Claude Code skill definition |
+| `skills/claude-to-im/SKILL.md` | Claude Code skill definition |
 
 ### Permission flow
 

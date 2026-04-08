@@ -13,8 +13,8 @@ SOURCE_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 echo "Installing $SKILL_NAME skill for Codex..."
 
 # Check source
-if [ ! -f "$SOURCE_DIR/SKILL.md" ]; then
-  echo "Error: SKILL.md not found in $SOURCE_DIR"
+if [ ! -f "$SOURCE_DIR/skills/claude-to-im/SKILL.md" ]; then
+  echo "Error: skills/claude-to-im/SKILL.md not found in $SOURCE_DIR"
   exit 1
 fi
 

@@ -61,35 +61,29 @@ npx skills add veritas501/claude-to-im
 帮我接微信
 ```
 
-#### 备选：直接克隆到 Claude Code Skills 目录
+#### 备选：克隆并创建符号链接
 
 ```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/.claude/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/code/claude-to-im
+mkdir -p ~/.claude/skills
+ln -s ~/code/claude-to-im/skills/claude-to-im ~/.claude/skills/claude-to-im
 ```
 
 Claude Code 会自动发现。
-
-#### 备选：符号链接方式（适合开发）
-
-```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
-mkdir -p ~/.claude/skills
-ln -s ~/code/Claude-to-IM-skill ~/.claude/skills/claude-to-im
-```
 
 ### Codex
 
 #### 推荐：使用 Codex 安装脚本
 
 ```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/code/Claude-to-IM-skill
-bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
+git clone https://github.com/veritas501/claude-to-im.git ~/code/claude-to-im
+bash ~/code/claude-to-im/scripts/install-codex.sh
 ```
 
 如果你想保留可开发的本地仓库：
 
 ```bash
-bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh --link
+bash ~/code/claude-to-im/scripts/install-codex.sh --link
 ```
 
 安装脚本会把 Skill 放到 `~/.codex/skills/claude-to-im`，并自动安装依赖、构建 daemon。
@@ -106,11 +100,12 @@ claude-to-im setup
 帮我接微信桥接
 ```
 
-#### 备选：直接克隆到 Codex skills 目录
+#### 备选：克隆并创建符号链接（Codex）
 
 ```bash
-git clone https://github.com/veritas501/claude-to-im.git ~/.codex/skills/claude-to-im
-cd ~/.codex/skills/claude-to-im
+git clone https://github.com/veritas501/claude-to-im.git ~/code/claude-to-im
+mkdir -p ~/.codex/skills
+ln -s ~/code/claude-to-im/skills/claude-to-im ~/.codex/skills/claude-to-im
 bun install
 bun run build
 ```
@@ -133,10 +128,10 @@ bun run build
 npx skills add veritas501/claude-to-im
 ```
 
-如果你是通过 `git clone` 或符号链接安装的：
+如果你是通过 `git clone` 和符号链接安装的：
 
 ```bash
-cd ~/.claude/skills/claude-to-im
+cd ~/code/claude-to-im
 git pull
 bun install
 bun run build
@@ -155,13 +150,13 @@ bun run build
 
 ```bash
 rm -rf ~/.codex/skills/claude-to-im
-bash ~/code/Claude-to-IM-skill/scripts/install-codex.sh
+bash ~/code/claude-to-im/scripts/install-codex.sh
 ```
 
-如果你是用 `--link` 模式，或者直接克隆到 Codex skills 目录：
+如果你是用 `--link` 模式或符号链接：
 
 ```bash
-cd ~/.codex/skills/claude-to-im
+cd ~/code/claude-to-im
 git pull
 bun install
 bun run build
@@ -279,6 +274,7 @@ start bridge
 1. 在已安装的 Skill 目录里运行本地扫码工具：
    - Claude Code 默认安装：`cd ~/.claude/skills/claude-to-im && bun run weixin:login`
    - Codex 默认安装：`cd ~/.codex/skills/claude-to-im && bun run weixin:login`
+   - 符号链接安装：`cd ~/code/claude-to-im && bun run weixin:login`
 2. 工具会生成 `~/.claude-to-im/runtime/weixin-login.html`，并尽量自动用浏览器打开
 3. 用微信扫码并在手机上确认
 4. 成功后，账号会保存到 `~/.claude-to-im/data/weixin-accounts.json`
@@ -322,7 +318,7 @@ start bridge
 | `src/logger.ts` | 密钥脱敏的文件日志，支持轮转 |
 | `scripts/daemon.sh` | 进程管理（start/stop/status/logs） |
 | `scripts/doctor.sh` | 诊断检查 |
-| `SKILL.md` | Claude Code Skill 定义文件 |
+| `skills/claude-to-im/SKILL.md` | Claude Code Skill 定义文件 |
 
 ### 权限流程
 
