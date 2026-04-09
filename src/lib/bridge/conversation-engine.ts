@@ -393,11 +393,35 @@ async function consumeStream(
     }
 
     // Extract text-only response for IM delivery
-    const responseText = contentBlocks
+    // Also include tool_result content when there's no text output
+    // (e.g., cron tool executed but Claude didn't add commentary)
+    let responseText = contentBlocks
       .filter((b): b is Extract<MessageContentBlock, { type: 'text' }> => b.type === 'text')
       .map((b) => b.text)
       .join('')
       .trim();
+
+    // If no text but has tool_results, include their content
+    if (!responseText) {
+      const toolResultTexts = contentBlocks
+        .filter((b): b is Extract<MessageContentBlock, { type: 'tool_result' }> => b.type === 'tool_result')
+        .map((b) => {
+          const content = b.content;
+          if (typeof content === 'string') return content;
+          if (Array.isArray(content)) {
+            return content
+              .filter((c): c is { type: 'text'; text: string } => c.type === 'text')
+              .map((c) => c.text)
+              .join('\n');
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .join('\n\n');
+      if (toolResultTexts) {
+        responseText = toolResultTexts;
+      }
+    }
 
     return {
       responseText,

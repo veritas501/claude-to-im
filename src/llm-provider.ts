@@ -653,17 +653,17 @@ export function handleMessage(
     }
 
     case 'assistant': {
-      // Full assistant message — capture text but do NOT emit it.
-      // Text deltas are already streamed via stream_event above; emitting
-      // the full text block here would duplicate the entire response.
-      //
-      // The captured text is used by the catch block to surface business
-      // errors (e.g. "Your organization does not have access") that the
-      // CLI returned as assistant text without prior streaming deltas.
+      // Full assistant message.
+      // When stream_event deltas were received, text is already emitted — skip to avoid duplication.
+      // When NO stream_event was received (some models/SDK versions), emit text from here as fallback.
       if (msg.message?.content) {
         for (const block of msg.message.content) {
           if (block.type === 'text' && block.text) {
             state.lastAssistantText += (state.lastAssistantText ? '\n' : '') + block.text;
+            // Fallback: emit text if no stream_event deltas were received
+            if (!state.hasStreamedText) {
+              controller.enqueue(sseEvent('text', block.text));
+            }
           } else if (block.type === 'tool_use') {
             controller.enqueue(
               sseEvent('tool_use', {

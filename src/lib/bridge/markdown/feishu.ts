@@ -146,14 +146,17 @@ export function buildFinalCardJson(
     content = content ? `${content}\n\n${toolMd}` : toolMd;
   }
 
-  if (content) {
-    elements.push({
-      tag: 'markdown',
-      content,
-      text_align: 'left',
-      text_size: 'normal',
-    });
+  // Always show something — even if just "Done" when no text output
+  if (!content) {
+    content = '✅ Done';
   }
+
+  elements.push({
+    tag: 'markdown',
+    content,
+    text_align: 'left',
+    text_size: 'normal',
+  });
 
   // Footer
   if (footer) {
