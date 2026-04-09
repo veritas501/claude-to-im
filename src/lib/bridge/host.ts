@@ -201,6 +201,14 @@ export interface BridgeStore {
 
 // ── Host Interface: LLM Provider ─────────────────────────────
 
+/** Bridge context for channel-aware MCP tool calls (cron, etc.). */
+export interface BridgeContext {
+  channelType: string;
+  chatId: string;
+  userId?: string;
+  displayName?: string;
+}
+
 /** Parameters for starting an LLM stream. */
 export interface StreamChatParams {
   prompt: string;
@@ -215,6 +223,8 @@ export interface StreamChatParams {
   conversationHistory?: Array<{ role: 'user' | 'assistant'; content: string }>;
   files?: FileAttachment[];
   onRuntimeStatusChange?: (status: string) => void;
+  /** Bridge context injected as CTI_BRIDGE_* env vars for MCP tools. */
+  bridgeContext?: BridgeContext;
 }
 
 export interface LLMProvider {

@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { ChannelBinding } from './types.js';
+import type { ChannelAddress } from './types.js';
 import type {
   FileAttachment,
   SSEEvent,
@@ -68,6 +69,8 @@ export async function processMessage(
   files?: FileAttachment[],
   onPartialText?: OnPartialText,
   onToolEvent?: OnToolEvent,
+  /** Channel address for bridge context injection (cron MCP tools). */
+  address?: ChannelAddress,
 ): Promise<ConversationResult> {
   const { store, llm } = getBridgeContext();
   const sessionId = binding.codepilotSessionId;
@@ -179,6 +182,12 @@ export async function processMessage(
       onRuntimeStatusChange: (status: string) => {
         try { store.setSessionRuntimeStatus(sessionId, status); } catch { /* best effort */ }
       },
+      bridgeContext: address ? {
+        channelType: address.channelType,
+        chatId: address.chatId,
+        userId: address.userId,
+        displayName: address.displayName,
+      } : undefined,
     });
 
     // Consume the stream server-side (replicate collectStreamResponse pattern).

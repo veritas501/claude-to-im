@@ -108,8 +108,9 @@ import type { ChannelAddress, SendResult } from './types.js';
  * Render response text and deliver via the appropriate channel format.
  * Telegram: Markdown → HTML chunks via deliverRendered.
  * Other channels: plain text via deliver (no HTML).
+ * Exported for use by cron-scheduler.
  */
-async function deliverResponse(
+export async function deliverResponse(
   adapter: BaseChannelAdapter,
   address: ChannelAddress,
   responseText: string,
@@ -172,7 +173,8 @@ interface BridgeManagerState {
   autoStartChecked: boolean;
 }
 
-function getState(): BridgeManagerState {
+/** Exported for cron-scheduler to access adapters. */
+export function getState(): BridgeManagerState {
   const g = globalThis as unknown as Record<string, BridgeManagerState>;
   if (!g[GLOBAL_KEY]) {
     g[GLOBAL_KEY] = {
@@ -706,7 +708,7 @@ async function handleMessage(
         perm.suggestions,
         msg.messageId,
       );
-    }, taskAbort.signal, hasAttachments ? msg.attachments : undefined, onPartialText, onToolEvent);
+    }, taskAbort.signal, hasAttachments ? msg.attachments : undefined, onPartialText, onToolEvent, msg.address);
 
     // Finalize streaming card if adapter supports it.
     // onStreamEnd awaits any in-flight card creation and returns true if a card
@@ -813,7 +815,7 @@ async function handleCommand(
   switch (command) {
     case '/start':
       response = [
-        '<b>CodePilot Bridge</b>',
+        '<b>claude-to-im</b>',
         '',
         'Send any message to interact with Claude.',
         '',
@@ -825,6 +827,7 @@ async function handleCommand(
         '/status - Show current status',
         '/sessions - List recent sessions',
         '/stop - Stop current session',
+        '/clear - Clear conversation context (like /clear in Claude)',
         '/perm allow|allow_session|deny &lt;id&gt; - Respond to permission',
         '/help - Show this help',
       ].join('\n');
@@ -904,7 +907,8 @@ async function handleCommand(
       response = [
         '<b>Bridge Status</b>',
         '',
-        `Session: <code>${binding.codepilotSessionId.slice(0, 8)}...</code>`,
+        `Bridge Session: <code>${binding.codepilotSessionId}</code>`,
+        `Claude Session: <code>${binding.sdkSessionId || 'none'}</code>`,
         `CWD: <code>${escapeHtml(binding.workingDirectory || '~')}</code>`,
         `Mode: <b>${binding.mode}</b>`,
         `Model: <code>${binding.model || 'default'}</code>`,
@@ -920,10 +924,25 @@ async function handleCommand(
         const lines = ['<b>Sessions:</b>', ''];
         for (const b of bindings.slice(0, 10)) {
           const active = b.active ? 'active' : 'inactive';
-          lines.push(`<code>${b.codepilotSessionId.slice(0, 8)}...</code> [${active}] ${escapeHtml(b.workingDirectory || '~')}`);
+          lines.push(`<code>${b.codepilotSessionId}</code> [${active}] ${escapeHtml(b.workingDirectory || '~')}`);
         }
         response = lines.join('\n');
       }
+      break;
+    }
+
+    case '/clear': {
+      const binding = router.resolve(msg.address);
+      const st = getState();
+      // Abort any running task first
+      const runningTask = st.activeTasks.get(binding.codepilotSessionId);
+      if (runningTask) {
+        runningTask.abort();
+        st.activeTasks.delete(binding.codepilotSessionId);
+      }
+      // Clear sdkSessionId so the next message starts a fresh conversation context
+      store.updateChannelBinding(binding.id, { sdkSessionId: '' });
+      response = 'Conversation cleared. Next message will start a fresh context.';
       break;
     }
 
@@ -963,7 +982,7 @@ async function handleCommand(
 
     case '/help':
       response = [
-        '<b>CodePilot Bridge Commands</b>',
+        '<b>claude-to-im commands</b>',
         '',
         '/new [path] - Start new session',
         '/bind &lt;session_id&gt; - Bind to existing session',
@@ -972,6 +991,7 @@ async function handleCommand(
         '/status - Show current status',
         '/sessions - List recent sessions',
         '/stop - Stop current session',
+        '/clear - Clear conversation context (like /clear in Claude)',
         '/perm allow|allow_session|deny &lt;id&gt; - Respond to permission request',
         '1/2/3 - Quick permission reply (Feishu/QQ/WeChat, single pending)',
         '/help - Show this help',

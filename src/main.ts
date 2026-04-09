@@ -10,6 +10,8 @@ import crypto from 'node:crypto';
 
 import { initBridgeContext } from './lib/bridge/context.js';
 import * as bridgeManager from './lib/bridge/bridge-manager.js';
+import * as cronScheduler from './lib/bridge/cron-scheduler.js';
+import * as mcpHttp from './mcp-http-server.js';
 // Side-effect import to trigger adapter self-registration
 import './lib/bridge/adapters/index.js';
 import './adapters/weixin-adapter.js';
@@ -160,6 +162,13 @@ async function main(): Promise<void> {
 
   await bridgeManager.start();
 
+  // Start MCP HTTP/SSE server for cron tool (before cron scheduler)
+  const mcpPort = await mcpHttp.startMcpHttpServer();
+  console.log(`[claude-to-im] MCP SSE server on port ${mcpPort}`);
+
+  // Start cron scheduler (after bridge is up so adapters are available)
+  await cronScheduler.start();
+
   // Graceful shutdown
   let shuttingDown = false;
   const shutdown = async (signal?: string) => {
@@ -168,6 +177,8 @@ async function main(): Promise<void> {
     const reason = signal ? `signal: ${signal}` : 'shutdown requested';
     console.log(`[claude-to-im] Shutting down (${reason})...`);
     pendingPerms.denyAll();
+    cronScheduler.stop();
+    await mcpHttp.stopMcpHttpServer();
     await bridgeManager.stop();
     writeStatus({ running: false, lastExitReason: reason });
     process.exit(0);

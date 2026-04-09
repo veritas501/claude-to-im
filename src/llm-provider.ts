@@ -11,6 +11,7 @@ import { query } from '@anthropic-ai/claude-agent-sdk';
 import type { SDKMessage, PermissionResult } from '@anthropic-ai/claude-agent-sdk';
 import type { LLMProvider, StreamChatParams, FileAttachment } from '../lib/bridge/host.js';
 import type { PendingPermissions } from './permission-gateway.js';
+import * as mcpHttp from './mcp-http-server.js';
 
 import { sseEvent } from './sse-utils.js';
 
@@ -444,6 +445,14 @@ export class SDKLLMProvider implements LLMProvider {
           try {
             const cleanEnv = buildSubprocessEnv();
 
+            // Inject bridge context as env vars for MCP tools (e.g., cron)
+            if (params.bridgeContext) {
+              cleanEnv.CTI_BRIDGE_CHANNEL_TYPE = params.bridgeContext.channelType;
+              cleanEnv.CTI_BRIDGE_CHAT_ID = params.bridgeContext.chatId;
+              cleanEnv.CTI_BRIDGE_USER_ID = params.bridgeContext.userId || '';
+              cleanEnv.CTI_BRIDGE_DISPLAY_NAME = params.bridgeContext.displayName || '';
+            }
+
             // Cross-runtime migration safety: drop non-Claude model names
             // that may linger in session data from a previous Codex runtime.
             let model = params.model;
@@ -511,6 +520,21 @@ export class SDKLLMProvider implements LLMProvider {
             if (cliPath) {
               queryOptions.pathToClaudeCodeExecutable = cliPath;
             }
+
+            // Inject SSE MCP server for cron tool (running inside daemon)
+            const mcpSseUrl = mcpHttp.buildMcpSseUrl(params.bridgeContext);
+            if (mcpSseUrl) {
+              queryOptions.mcpServers = {
+                'claude-to-im-cron': {
+                  type: 'sse',
+                  url: mcpSseUrl,
+                },
+              };
+              console.log(`[llm-provider] MCP SSE cron server: ${mcpSseUrl}`);
+            } else {
+              console.warn('[llm-provider] MCP SSE server not available, cron tool disabled');
+            }
+
 
             const prompt = buildPrompt(params.prompt, params.files);
             const q = query({

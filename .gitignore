@@ -12,3 +12,4 @@ config.env
 .DS_Store
 *.service
 daemon
+mcp-server
